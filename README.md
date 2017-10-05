@@ -13,7 +13,9 @@ suitable to store relevant information for markov chains.
 
 ## Installation
 
-*WIP*
+```bash
+pip install chattymarkov
+```
 
 ## Examples
 
