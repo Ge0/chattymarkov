@@ -2,6 +2,7 @@
 
 import sys
 from os.path import abspath, dirname, join
+from pip.req import parse_requirements
 from subprocess import PIPE, Popen
 
 from setuptools import setup
@@ -20,8 +21,10 @@ def version():
 
 def requires():
     """Parse the requirements.txt file and generate a requirements list."""
-    with open(join(CWD, 'requirements.txt'), 'r') as fp:
-        return fp.read().split()
+    # with open(join(CWD, 'requirements', 'base.txt'), 'r') as fp:
+    install_reqs = parse_requirements(join(CWD, 'requirements', 'base.txt'),
+                                      session=False)
+    return [str(ir.req) for ir in install_reqs]
 
 
 setup(
@@ -35,6 +38,9 @@ setup(
     include_package_data=True,
     packages=[
         'chattymarkov',
+    ],
+    setup_requires=[
+        'setuptools_scm'
     ],
     install_requires=requires()
 )
