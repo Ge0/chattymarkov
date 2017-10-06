@@ -1,5 +1,5 @@
-import pytest
 from chattymarkov.database import MemoryDatabase
+
 
 class TestMemoryDatabase:
     def setup_method(self, method):
