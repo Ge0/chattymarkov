@@ -1,0 +1,5 @@
+language: python
+
+script:
+    - tox -e flakee
+    - tox
