@@ -58,5 +58,4 @@ If you want to add some support to a database, please make a pull request!
 
   * Provide a better interface for databases (everything is grouped in the
   `database` module; that is maybe wrong)
-  * Add travis support to automatically check PEP-8 consistency & tests.
   * Release some decent package.
