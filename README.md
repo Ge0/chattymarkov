@@ -21,7 +21,7 @@ pip install chattymarkov
 
 From `examples/memory.py`
 
-```python3
+```python
 #!/usr/bin/env python3
 from chattymarkov import ChattyMarkov
 from chattymarkov.database import MemoryDatabase
