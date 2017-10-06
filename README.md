@@ -1,5 +1,7 @@
 # Chattymarkov
 
+![travis build](https://travis-ci.org/Ge0/chattymarkov.svg?branch=master)
+
 ## Description
 
 Chattymarkov is a python module that lets you generate random sentences
