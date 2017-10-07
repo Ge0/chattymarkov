@@ -5,7 +5,7 @@ from os.path import abspath, dirname, join
 from subprocess import PIPE, Popen
 
 from pip.req import parse_requirements
-from setuptools import setup
+from setuptools import find_packages, setup
 
 CWD = dirname(abspath(__file__))
 
@@ -36,9 +36,7 @@ setup(
     url='https://github.com/Ge0/chattymarkov',
     license='MIT',
     include_package_data=True,
-    packages=[
-        'chattymarkov',
-    ],
+    packages=find_packages(),
     setup_requires=[
         'setuptools_scm'
     ],

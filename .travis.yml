@@ -11,4 +11,5 @@ script:
     - tox -e isort
     - tox
 after_success:
-    - tox -e codecov
+    - pytest --cov=chattymarkov tests
+    - codecov -t 076aff3c-4061-42da-90a8-31f441e00220
