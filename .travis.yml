@@ -11,4 +11,4 @@ script:
     - tox -e isort
     - tox
 after_success:
-    codecov -t 076aff3c-4061-42da-90a8-31f441e00220
+    - tox -e codecov
