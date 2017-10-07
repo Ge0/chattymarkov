@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - codecov badge in the README.md file
+###
+- Fix setup.py to get a static version number
+- Refactore setup.py
 
 ## [0.0.2] - 2017-10-07
 ### Added
