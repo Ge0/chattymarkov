@@ -1,4 +1,4 @@
-"""emory database class for chattimarkov.
+"""Memory database class for chattimarkov.
 
 This is just a volatile, in-memory database which is built either from a
 pre-existing dictionary or from scratch. Upon object destruction, the database
