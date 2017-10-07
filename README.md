@@ -1,5 +1,6 @@
 # Chattymarkov
 
+[![codecov](https://codecov.io/gh/Ge0/chattymarkov/branch/master/graph/badge.svg)](https://codecov.io/gh/Ge0/chattymarkov)
 ![travis build](https://travis-ci.org/Ge0/chattymarkov.svg?branch=master)
 
 ## Description
