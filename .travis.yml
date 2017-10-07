@@ -4,9 +4,11 @@ python:
     - "3.6"
 
 install:
-      pip install tox-travis
+      pip install codecov tox-travis
 
 script:
     - tox -e flake8
     - tox -e isort
     - tox
+after_success:
+    codecov
