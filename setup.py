@@ -2,9 +2,9 @@
 
 import sys
 from os.path import abspath, dirname, join
-from pip.req import parse_requirements
 from subprocess import PIPE, Popen
 
+from pip.req import parse_requirements
 from setuptools import setup
 
 CWD = dirname(abspath(__file__))
