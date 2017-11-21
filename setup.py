@@ -19,10 +19,11 @@ setup(
     author='Geoffrey ROYER',
     author_email='geoffrey.royer@gmail.com',
     name='chattymarkov',
-    version="1.0.0",
+    version="1.0.1",
     description='Generate random sentences through markov chains',
     url='https://github.com/Ge0/chattymarkov',
     license='MIT',
+    long_description=open(join(CWD, 'README.rst')).read(),
     include_package_data=True,
     packages=find_packages(),
     setup_requires=[
