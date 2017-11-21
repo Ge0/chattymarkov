@@ -1,7 +1,7 @@
 Chattymarkov
 ============
 
-|codecov| |travis build|
+|codecov| |travis build| |pypi version|
 
 Description
 -----------
@@ -66,4 +66,5 @@ Todo
 .. |codecov| image:: https://codecov.io/gh/Ge0/chattymarkov/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/Ge0/chattymarkov
 .. |travis build| image:: https://travis-ci.org/Ge0/chattymarkov.svg?branch=master
-
+.. |pypi version| image:: https://badge.fury.io/py/chattymarkov.svg
+   :target: https://badge.fury.io/py/chattymarkov
