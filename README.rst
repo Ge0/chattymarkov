@@ -52,6 +52,19 @@ sentence which hasn’t been ever written by anyone:
 
 The more sentences, the funnier generated ones.
 
+
+Supported databases
+-------------------
+
+-   Redis **(recommended)**: you can either provide a unix socket path (e.g.
+  ``redis:///path/to/unix_socket.sock;db=0`` or a ``host:port``
+  (e.g ``redis://localhost:6739;db=0``). Extra parameters are separated by
+  semi-colons after the unix socket path / host:port descriptor.
+-   JSON: you can provide a path to a file that will be formated with JSON.
+  Example: ``json:///path/to/file.json``
+-   Memory: in-memory database, just provide ```memory://`` as a connect
+  string.
+
 Contribute
 ----------
 
