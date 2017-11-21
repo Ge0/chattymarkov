@@ -1,7 +1,6 @@
-"""
-ChattyMarkov module.
+"""ChattyMarkov module.
 
-This module provide a base class to instanciate a `ChattyMarkov` class
+This module provides a base class to instanciate a `ChattyMarkov` class
 which is responsible for learning from sentences as much as generating ones.
 
 In order to succesfully memorise sentences, A `ChattyMarkov` instance will
