@@ -4,9 +4,8 @@ import json
 import os.path
 import random
 
-import six
-
 import redis
+import six
 
 from .base import AbstractDatabase
 
