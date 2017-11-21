@@ -7,6 +7,7 @@ In order to succesfully memorise sentences, A `ChattyMarkov` instance will
 rely on a database which has to inherit from the abstract interface described
 `chattymarkov.database.AbstractDatabase`.
 """
+from . import database
 
 
 class ChattyMarkov:
@@ -16,7 +17,7 @@ class ChattyMarkov:
     sentences and generate random sentences through a markov-chain-based
     algorithm."""
 
-    def __init__(self, database, prefix="chattymarkov", separator="\x01",
+    def __init__(self, connect_string, prefix="chattymarkov", separator="\x01",
                  stop_word="\x02"):
         """Instanciate the ChattyMarkov class.
 
@@ -27,7 +28,7 @@ class ChattyMarkov:
             - separator: a separator pattern for database storage.
             - stop_word: a stop-word pattern for database storage.
         """
-        self.db = database
+        self.db = database.build_database_connection(connect_string)
         self.separator = separator
         self.stop_word = stop_word
         self.prefix = prefix

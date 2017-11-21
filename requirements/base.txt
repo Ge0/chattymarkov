@@ -5,3 +5,4 @@
 #    pip-compile --output-file base.txt base.in
 #
 redis==2.10.6
+six==1.11.0

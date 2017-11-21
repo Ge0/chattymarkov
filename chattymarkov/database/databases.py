@@ -3,6 +3,9 @@ import atexit
 import json
 import os.path
 import random
+
+import six
+
 import redis
 
 from .base import AbstractDatabase
@@ -55,6 +58,7 @@ class RedisDatabase(AbstractDatabase):
     def set(self, key, value):
         self.handle.set(key, value)
 
+
 class MemoryDatabase(AbstractDatabase):
     """Memory database class for chattimarkov.
 
@@ -63,7 +67,7 @@ class MemoryDatabase(AbstractDatabase):
     database is not saved.
     """
 
-    def __init__(self, db=None):
+    def __init__(self, db=None, *args, **kwargs):
         if db is None:
             self.db = {}
         else:
@@ -106,7 +110,12 @@ class JSONFileDatabase(MemoryDatabase):
             db = json.load(open(filepath))
         else:
             db = None
-        super().__init__(self, db, *args, **kwargs)
+
+        if six.PY2:
+            MemoryDatabase.__init__(self, db, *args, **kwargs)
+        else:
+            super().__init__(db, *args, **kwargs)
+
         atexit.register(self.cleanup)
 
     def cleanup(self):

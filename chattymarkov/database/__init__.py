@@ -2,17 +2,15 @@
 
 This submodule gathers all the supported database formats.
 """
-# flake8: noqa
-from .json import JSONFileDatabase
-from .memory import MemoryDatabase
-from .databases import RedisDatabase
+import six
+from .databases import JSONFileDatabase, MemoryDatabase, RedisDatabase
 
 
 class ChattymarkovDatabaseError(Exception):
     """Base exception class for chattymarkov.database related errors."""
 
 
-class UnknownDatabasePrefixerror(ChattymarkovDatabaseError):
+class UnknownDatabasePrefixError(ChattymarkovDatabaseError):
     """Exception class for unknown database prefixes errors."""
 
 
@@ -35,7 +33,7 @@ def database(prefix):
 
 def get_database_builder(prefix):
     """Get the function associated to `prefix` to instanciate a database.
-    
+
     This function is a simple interface around the `_DATABASE_PREFIXES` hash.
 
     Args:
@@ -91,9 +89,45 @@ def build_redis_database(resource):
     else:
         # TCP socket connection
         host, colon, port = connection.partition(':')
+
+        if six.PY2:
+            port = unicode(port)  # noqa
+
         if host != '' and colon == ':' and port.isnumeric():
             return RedisDatabase(host=host, port=int(port),
                                  **extra_params)
+
+
+@database('memory')
+def build_memory_database(resource):
+    """Build a `MemoryDatabase` instance.
+
+    Args:
+        resource (str): path to the memory location. It has actually no sense
+            at that time. Should be "memory://" anyway.
+
+    Returns:
+        MemoryDatabase: an instance of MemoryDatabase that handles a
+            connection to the desired database.
+    """
+    return MemoryDatabase()
+
+
+@database('json')
+def build_json_database(resource):
+    """Build a `JSONFileDatabase` instance.
+
+    Args:
+        resource (str): path to the JSON file representing the database. If
+            the file is not empty, it will be loaded. In every cases, upon
+            instance destruction, the database will be stored in the specified
+            file.
+
+    Returns:
+        JSONFileDatabase: an instance of JSONFileDatabase that handles a
+            connection to the desired database.
+    """
+    return JSONFileDatabase(resource)
 
 
 def build_database_connection(connect_string):
@@ -112,10 +146,11 @@ def build_database_connection(connect_string):
             connection to the desired database.
     """
     prefix, colon_slash_slash, resource = connect_string.partition('://')
-    if resource != '':
+    if colon_slash_slash != '':
         builder = get_database_builder(prefix)
         return builder(resource)
     else:
         raise InvalidConnectionStringError(
             "Invalid connection string '{}'. Must be of the form "
-            "prefix://resource;param1=value1;param2=value2...")
+            "prefix://[resource[;param1=value1;param2=value2...]]".format(
+                prefix))
