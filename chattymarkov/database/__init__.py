@@ -5,7 +5,7 @@ This submodule gathers all the supported database formats.
 # flake8: noqa
 from .json import JSONFileDatabase
 from .memory import MemoryDatabase
-from .redis import RedisDatabase
+from .databases import RedisDatabase
 
 
 class ChattymarkovDatabaseError(Exception):
@@ -53,6 +53,15 @@ def get_database_builder(prefix):
     return _DATABASE_PREFIXES[prefix]
 
 
+def _get_connection_params(resource):
+    """Extract connection and params from `resource`."""
+    args = resource.split(';')
+    if len(args) > 1:
+        return args[0], args[1:]
+    else:
+        return args[0], []
+
+
 @database('redis')
 def build_redis_database(resource):
     """Build a `RedisDatabase` instance to communicate with a redis server.
@@ -66,7 +75,7 @@ def build_redis_database(resource):
     whitelist = {'db'}
     extra_params = {}
 
-    connection, *params = resource.split(';')
+    connection, params = _get_connection_params(resource)
 
     # Parse additional parameters, if any
     if len(params) > 0:
