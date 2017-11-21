@@ -19,7 +19,7 @@ setup(
     author='Geoffrey ROYER',
     author_email='geoffrey.royer@gmail.com',
     name='chattymarkov',
-    version="1.0.1",
+    version="1.0.2",
     description='Generate random sentences through markov chains',
     url='https://github.com/Ge0/chattymarkov',
     license='MIT',
