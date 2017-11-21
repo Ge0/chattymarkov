@@ -27,10 +27,8 @@ From `examples/memory.py`
 ```python
 #!/usr/bin/env python3
 from chattymarkov import ChattyMarkov
-from chattymarkov.database import MemoryDatabase
 
-db = MemoryDatabase()
-markov = ChattyMarkov(db)
+markov = ChattyMarkov("memory://")
 markov.learn("My favorite animal is the crocodile")
 markov.learn("The word animal is six letters long")
 print(markov.generate())
@@ -53,10 +51,9 @@ The more sentences, the funnier generated ones.
 
 ## Contribute
 
-If you want to add some support to a database, please make a pull request!
+If you want to add some support to a database or redesign the library,
+please make a pull request so we can discuss about it.
 
 ## Todo
 
-  * Provide a better interface for databases (everything is grouped in the
-  `database` module; that is maybe wrong)
-  * Release some decent package.
+  * Support other databases?
