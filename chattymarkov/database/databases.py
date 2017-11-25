@@ -12,18 +12,20 @@ from .base import AbstractDatabase
 
 class RedisDatabase(AbstractDatabase):
     def __init__(self, host="localhost", port=6739, db=0,
-                 unix_socket_path=None):
+                 unix_socket_path=None, password=None):
 
         self._db = int(db)
+        self._password = password
 
         if unix_socket_path is not None:
             self._unix_socket_path = unix_socket_path
             self.handle = redis.StrictRedis(unix_socket_path=unix_socket_path,
-                                            db=db)
+                                            db=db, password=password)
         else:
             self._host = host
             self._port = int(port)
-            self.handle = redis.StrictRedis(host=host, port=port, db=db)
+            self.handle = redis.StrictRedis(host=host, port=port, db=db,
+                                            password=password)
 
     @property
     def host(self):
@@ -36,6 +38,10 @@ class RedisDatabase(AbstractDatabase):
     @property
     def db(self):
         return self._db
+
+    @property
+    def password(self):
+        return self._password
 
     @property
     def unix_socket_path(self):

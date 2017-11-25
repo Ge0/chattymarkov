@@ -70,7 +70,7 @@ def build_redis_database(resource):
     Returns:
         RedisDatabase: instance to communicate with the redis server.
     """
-    whitelist = {'db'}
+    whitelist = {'password', 'db'}
     extra_params = {}
 
     connection, params = _get_connection_params(resource)

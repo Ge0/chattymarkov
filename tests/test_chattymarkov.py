@@ -31,5 +31,13 @@ class TestChattyMarkov(unittest.TestCase):
         c = ChattyMarkov("json://{}".format(self.json_file.name))
         self.assertTrue(isinstance(c.db, JSONFileDatabase))
 
-        c = ChattyMarkov("redis:///path/to/unix_socket_file.sock")
+        c = ChattyMarkov("redis:///path/to/socket.sock")
         self.assertTrue(isinstance(c.db, RedisDatabase))
+        self.assertEquals(c.db.unix_socket_path, "/path/to/socket.sock")
+        self.assertEquals(c.db.db, 0)
+
+        c = ChattyMarkov("redis://1.2.3.4:8765;db=3;password=foobar")
+        self.assertEquals(c.db.host, "1.2.3.4")
+        self.assertEquals(c.db.port, 8765)
+        self.assertEquals(c.db.password, "foobar")
+        self.assertEquals(c.db.db, 3)
