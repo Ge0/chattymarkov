@@ -4,46 +4,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- Redis databases have password option.
+
 ## [1.0.2] - 2017-11-21
 ### Changed
-- Add documentation
+- Add documentation.
 
 ## [1.0.1] - 2017-11-21
 ### Added
-- Long description in rst format
+- Long description in rst format.
 ### Changed
-- Fix changelog typo
+- Fix changelog typo.
 
 ## [1.0.0] - 2017-11-21
 ### Added
-- Tests
-### Changed
+- Add tests.
+### Change.
 - Use connection strings for databases.
 
 ## [0.0.4] - 2017-10-07
 ### Changed
-- Reupload python package on pypi
+- Reupload python package on pypi.
 
 ## [0.0.3] - 2017-10-07
 ### Added
-- codecov badge in the README.md file
+- codecov badge in the README.md file.
 ### Changed
-- Fix setup.py to get a static version number
-- Refactore setup.py
+- Fix setup.py to get a static version number.
+- Refactore setup.py.
 
 ## [0.0.2] - 2017-10-07
 ### Added
 - Changelog file.
-- Travis checks for flake8, isort and code coverage
+- Travis checks for flake8, isort and code coverage.
 
 ### Changed
-- Fix typos
-- Fix setup.py
+- Fix typos.
+- Fix setup.py.
 
 ## [0.0.1] - 2017-10-06
 ### Added
-- chattymarkov code base
-- Memory database
-- JSON database
-- Redis database 
-- Tests
+- chattymarkov code base.
+- Memory database.
+- JSON database.
+- Redis database. 
+- Tests.
