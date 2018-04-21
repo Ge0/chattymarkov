@@ -1,0 +1,13 @@
+README.rst
+setup.py
+src/chattymarkov/__about__.py
+src/chattymarkov/__init__.py
+src/chattymarkov.egg-info/PKG-INFO
+src/chattymarkov.egg-info/SOURCES.txt
+src/chattymarkov.egg-info/dependency_links.txt
+src/chattymarkov.egg-info/not-zip-safe
+src/chattymarkov.egg-info/requires.txt
+src/chattymarkov.egg-info/top_level.txt
+src/chattymarkov/database/__init__.py
+src/chattymarkov/database/base.py
+src/chattymarkov/database/databases.py

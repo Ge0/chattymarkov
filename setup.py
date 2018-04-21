@@ -1,33 +1,59 @@
-#!/usr/bin/env python3
-from os.path import abspath, dirname, join
+from os.path import dirname, join
 
-from pip.req import parse_requirements
 from setuptools import find_packages, setup
 
-CWD = dirname(abspath(__file__))
+
+KEYWORDS = []
+CLASSIFIERS = [
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: MIT License',
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: Implementation :: CPython',
+    'Programming Language :: Python',
+    'Topic :: Software Development',
+]
+INSTALL_REQUIRES = ['six', 'redis']
 
 
-def requires():
-    """Parse the requirements.txt file and generate a requirements list."""
-    # with open(join(CWD, 'requirements', 'base.txt'), 'r') as fp:
-    install_reqs = parse_requirements(join(CWD, 'requirements', 'base.txt'),
-                                      session=False)
-    return [str(ir.req) for ir in install_reqs]
+PROJECT_DIR = dirname(__file__)
+README_FILE = join(PROJECT_DIR, 'README.rst')
+ABOUT_FILE = join(PROJECT_DIR, 'src', 'chattymarkov', '__about__.py')
+
+
+def get_readme():
+    with open(README_FILE) as fileobj:
+        return fileobj.read()
+
+
+def get_about():
+    about = {}
+    with open(ABOUT_FILE) as fileobj:
+        exec(fileobj.read(), about)
+    return about
+
+
+ABOUT = get_about()
 
 
 setup(
-    author='Geoffrey ROYER',
-    author_email='geoffrey.royer@gmail.com',
-    name='chattymarkov',
-    version="1.1.0",
-    description='Generate random sentences through markov chains',
-    url='https://github.com/Ge0/chattymarkov',
-    license='MIT',
-    long_description=open(join(CWD, 'README.rst')).read(),
-    include_package_data=True,
-    packages=find_packages(),
-    setup_requires=[
-        'setuptools_scm'
-    ],
-    install_requires=requires()
+    name=ABOUT['__title__'],
+    version=ABOUT['__version__'],
+    description=ABOUT['__summary__'],
+    long_description=get_readme(),
+    author=ABOUT['__author__'],
+    author_email=ABOUT['__email__'],
+    license=ABOUT['__license__'],
+    url=ABOUT['__uri__'],
+    keywords=KEYWORDS,
+    classifiers=CLASSIFIERS,
+    package_dir={'': 'src'},
+    packages=find_packages('src'),
+    install_requires=INSTALL_REQUIRES,
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4',
+    zip_safe=False,
 )
