@@ -6,6 +6,7 @@ which is responsible for learning from sentences as much as generating ones.
 In order to succesfully memorise sentences, A `ChattyMarkov` instance will
 rely on a database which has to inherit from the abstract interface described
 `chattymarkov.database.AbstractDatabase`.
+
 """
 from . import database
 
@@ -15,18 +16,21 @@ class ChattyMarkov:
 
     Define an interface between a user and a database in order to learn
     sentences and generate random sentences through a markov-chain-based
-    algorithm."""
+    algorithm.
+
+    """
 
     def __init__(self, connect_string, prefix="chattymarkov", separator="\x01",
                  stop_word="\x02"):
         """Instanciate the ChattyMarkov class.
 
         Args:
-            - database: a database instance which inherits from
-                        AbstractDatabase.
-            - prefix: a prefix useful in database storage.
-            - separator: a separator pattern for database storage.
-            - stop_word: a stop-word pattern for database storage.
+            database: a database instance which inherits from
+                AbstractDatabase.
+            prefix: a prefix useful in database storage.
+            separator: a separator pattern for database storage.
+            stop_word: a stop-word pattern for database storage.
+
         """
         self.db = database.build_database_connection(connect_string)
         self.separator = separator
@@ -38,9 +42,11 @@ class ChattyMarkov:
         given the `key` parameter.
 
         Args:
-            - key: the string to generate the database key from.
+            key: the string to generate the database key from.
 
-        Returns: a key useful for internal use.
+        Returns:
+            A key used for internal use.
+
         """
         return '-'.join((self.prefix, key))
 
@@ -49,7 +55,8 @@ class ChattyMarkov:
         memorise a sentence provided through the parameter `msg`.
 
         Args:
-            - msg: the sentence to learn from.
+            msg: the sentence to learn from.
+
         """
         if msg == '':
             return
@@ -62,7 +69,9 @@ class ChattyMarkov:
         browse a markov graph, to construct a random sentence from what
         the ChattyMarkov instance has learned so far.
 
-        Returns: a string which consist of a random generated sentence.
+        Returns:
+            A string which consists of a random generated sentence.
+
         """
         lastword = ""
         previous = ""

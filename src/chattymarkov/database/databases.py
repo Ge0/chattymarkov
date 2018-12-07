@@ -70,6 +70,7 @@ class MemoryDatabase(AbstractDatabase):
     This is just a volatile, in-memory database which is built either from a
     pre-existing dictionary or from scratch. Upon object destruction, the
     database is not saved.
+
     """
 
     def __init__(self, db=None, *args, **kwargs):
@@ -107,6 +108,7 @@ class JSONFileDatabase(MemoryDatabase):
     JSON files are actually not really suitable for storing a key-value
     database. Loading and storing can actually be slow, mostly if the
     chattimarkov instance is learning a lot.
+
     """
 
     def __init__(self, filepath, *args, **kwargs):
