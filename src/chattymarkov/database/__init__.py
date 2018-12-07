@@ -2,7 +2,6 @@
 
 This submodule gathers all the supported database formats.
 """
-import six
 from .databases import JSONFileDatabase, MemoryDatabase, RedisDatabase
 
 
@@ -89,9 +88,6 @@ def build_redis_database(resource):
     else:
         # TCP socket connection
         host, colon, port = connection.partition(':')
-
-        if six.PY2:
-            port = unicode(port)  # noqa
 
         if host != '' and colon == ':' and port.isnumeric():
             return RedisDatabase(host=host, port=int(port),
