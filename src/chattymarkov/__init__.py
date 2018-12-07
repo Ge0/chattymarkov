@@ -11,6 +11,81 @@ rely on a database which has to inherit from the abstract interface described
 from . import database
 
 
+class ChattyMarkovAsync:
+    """ChattyMarkov, the asyncio way.
+
+    See also:
+        `ChattyMarkov`
+
+    """
+
+    def __init__(self, connect_string, prefix="chattymarkov", separator="\x01",
+                 stop_word="\x02"):
+        """Instanciate the ChattyMarkov async class."""
+        self.db = database.build_database_connection_async(connect_string)
+        self.separator = separator
+        self.stop_word = stop_word
+        self.prefix = prefix
+
+    async def learn(self, msg: str) -> None:
+        """Learn from *msg*."""
+        if not msg:
+            return
+        for words in await self._split_message(msg):
+            key = self.separator.join(words[:-1])
+            await self.db.add(self._make_key(key), words[-1])
+
+    async def _split_message(self, msg):
+        """Split *msg* to better learn from it."""
+        words = msg.split(' ')
+        lastword = ""
+        previous = ""
+        msg += " " + self.stop_word
+
+        for word in words:
+            key = self._make_key(self.separator.join([previous, lastword]))
+            await self.db.add(key, word)
+            yield [previous, lastword, word]
+            previous = lastword
+            lastword = word
+
+    async def generate(self):
+        """Generate a message by browsing the database randomly as we
+        browse a markov graph, to construct a random sentence from what
+        the ChattyMarkov instance has learned so far.
+
+        Returns:
+            A string which consists of a random generated sentence.
+
+        """
+        lastword = ""
+        previous = ""
+        out = []
+
+        while True:
+            key = self._make_key(self.separator.join([previous, lastword]))
+            word = await self.db.random(key)
+            if not word or word == self.stop_word:
+                break
+            out.append(word)
+            previous = lastword
+            lastword = word
+        return ' '.join(out)
+
+    def _make_key(self, key):
+        """Private method. Generate a key for internal database storage,
+        given the *key* parameter.
+
+        Args:
+            key: the string to generate the database key from.
+
+        Returns:
+            A key used for internal use.
+
+        """
+        return '-'.join((self.prefix, key))
+
+
 class ChattyMarkov:
     """ChattyMarkov class.
 
