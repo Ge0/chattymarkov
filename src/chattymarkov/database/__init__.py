@@ -2,7 +2,9 @@
 
 This submodule gathers all the supported database formats.
 """
-from .databases import JSONFileDatabase, MemoryDatabase, RedisDatabase
+from .databases import (
+    JSONFileDatabase, MemoryDatabase, RedisDatabase, RedisDatabaseAsync
+)
 
 
 class ChattymarkovDatabaseError(Exception):
@@ -59,15 +61,30 @@ def _get_connection_params(resource):
         return args[0], []
 
 
+@database("redis_async")
+def build_redis_database_async(resource: str):
+    """Build a `RedisDatabaseAsync` instance to communicate with a redis
+    server.
+
+    See also:
+        `build_redis_database`
+
+    """
+    return build_redis_database(resource, True)
+
+
 @database('redis')
-def build_redis_database(resource):
-    """Build a `RedisDatabase` instance to communicate with a redis server.
+def build_redis_database(resource: str, is_async: bool = False):
+    """Build a `RedisDatabase` or a `RedisDatabaseAsync` instance to
+    communicate with a redis server.
 
     Args:
         resource (str): a string that represents connection information.
+        is_async (bool): True to build a `RedisDatabaseAsync` instance,
+            False to build a `RedisDatabase` instance.
 
     Returns:
-        RedisDatabase: instance to communicate with the redis server.
+        An instance to communicate with the redis server.
     """
     whitelist = {'password', 'db'}
     extra_params = {}
@@ -83,8 +100,12 @@ def build_redis_database(resource):
 
     if connection.startswith('/'):
         # UNIX socket connection
-        return RedisDatabase(unix_socket_path=connection,
-                             **extra_params)
+        if is_async:
+            return RedisDatabaseAsync(unix_socket_path=connection,
+                                      **extra_params)
+        else:
+            return RedisDatabase(unix_socket_path=connection,
+                                 **extra_params)
     else:
         # TCP socket connection
         host, colon, port = connection.partition(':')
@@ -127,7 +148,7 @@ def build_json_database(resource):
 
 
 def build_database_connection(connect_string):
-    """Build a database connection based on `connect_string`.
+    """Build a database connection based on *connect_string*.
 
     Args:
         connect_string (str): connection string for the database connection.

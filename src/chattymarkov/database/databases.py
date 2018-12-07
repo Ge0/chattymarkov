@@ -1,32 +1,16 @@
 """Database interfaces for chattimarkov."""
 import atexit
+import aioredis
 import json
 import os.path
 import random
 
 import redis
-import six
 
 from .base import AbstractDatabase
 
 
-class RedisDatabase(AbstractDatabase):
-    def __init__(self, host="localhost", port=6739, db=0,
-                 unix_socket_path=None, password=None):
-
-        self._db = int(db)
-        self._password = password
-
-        if unix_socket_path is not None:
-            self._unix_socket_path = unix_socket_path
-            self.handle = redis.StrictRedis(unix_socket_path=unix_socket_path,
-                                            db=db, password=password)
-        else:
-            self._host = host
-            self._port = int(port)
-            self.handle = redis.StrictRedis(host=host, port=port, db=db,
-                                            password=password)
-
+class RedisDatabasePropertyMixin:
     @property
     def host(self):
         return self._host
@@ -46,6 +30,64 @@ class RedisDatabase(AbstractDatabase):
     @property
     def unix_socket_path(self):
         return self._unix_socket_path
+
+
+class RedisDatabaseAsync(RedisDatabasePropertyMixin):
+
+    def __init__(self, host="localhost", port=6739, db=0,
+                 unix_socket_path=None, password=None):
+        self._conn = None
+        self._db = int(db)
+        self._password = password
+        self._unix_socket_path = None
+
+        if unix_socket_path is not None:
+            self._unix_socket_path = unix_socket_path
+        else:
+            self._host = host
+            self._port = int(port)
+
+    async def connect(self):
+        if self._unix_socket_path:
+            self._conn = await aioredis.create_connection(
+                self._unix_socket_path, db=self._db, password=self._password)
+        else:
+            self._conn = await aioredis.create_connection(
+                (self._host, self._port), db=self._db, password=self._password)
+
+    async def add(self, key, element):
+        return self._conn.sadd(key, element.encode()) > 0
+
+    async def random(self, key):
+        element = await self._conn.srandmember(key)
+        if element is not None:
+            return element.decode()
+
+    async def get(self, key):
+        element = await self._conn.get(key)
+        if element is not None:
+            return element.decode()
+
+    async def set(self, key, value):
+        await self._conn.set(key, value)
+
+
+class RedisDatabase(AbstractDatabase, RedisDatabasePropertyMixin):
+    def __init__(self, host="localhost", port=6739, db=0,
+                 unix_socket_path=None, password=None):
+
+        self._db = int(db)
+        self._password = password
+
+        if unix_socket_path is not None:
+            self._unix_socket_path = unix_socket_path
+            self.handle = redis.StrictRedis(unix_socket_path=unix_socket_path,
+                                            db=db, password=password)
+        else:
+            self._host = host
+            self._port = int(port)
+            self.handle = redis.StrictRedis(host=host, port=port, db=db,
+                                            password=password)
 
     def add(self, key, element):
         return self.handle.sadd(key, element.encode()) > 0
@@ -118,10 +160,7 @@ class JSONFileDatabase(MemoryDatabase):
         else:
             db = None
 
-        if six.PY2:
-            MemoryDatabase.__init__(self, db, *args, **kwargs)
-        else:
-            super().__init__(db, *args, **kwargs)
+        super().__init__(db, *args, **kwargs)
 
         atexit.register(self.cleanup)
 
