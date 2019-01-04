@@ -12,7 +12,7 @@ CLASSIFIERS = [
     'Programming Language :: Python',
     'Topic :: Software Development',
 ]
-INSTALL_REQUIRES = ['aioredis']
+INSTALL_REQUIRES = ['aioredis', 'redis']
 
 
 PROJECT_DIR = dirname(__file__)

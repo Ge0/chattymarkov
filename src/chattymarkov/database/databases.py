@@ -1,10 +1,10 @@
 """Database interfaces for chattimarkov."""
 import atexit
-import aioredis
 import json
 import os.path
 import random
 
+import aioredis
 import redis
 
 from .base import AbstractDatabase
