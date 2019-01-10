@@ -22,16 +22,21 @@ class ChattyMarkovAsync:
     def __init__(self, connect_string, prefix="chattymarkov", separator="\x01",
                  stop_word="\x02"):
         """Instanciate the ChattyMarkov async class."""
-        self.db = database.build_database_connection_async(connect_string)
+        self.db = database.build_database_connection(connect_string)
         self.separator = separator
         self.stop_word = stop_word
         self.prefix = prefix
+
+    async def connect(self) -> None:
+        """Wrap call around `self.db.connect`."""
+        if hasattr(self.db, "connect"):
+            await self.db.connect()
 
     async def learn(self, msg: str) -> None:
         """Learn from *msg*."""
         if not msg:
             return
-        for words in await self._split_message(msg):
+        async for words in self._split_message(msg):
             key = self.separator.join(words[:-1])
             await self.db.add(self._make_key(key), words[-1])
 

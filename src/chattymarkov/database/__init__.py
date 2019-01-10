@@ -111,8 +111,12 @@ def build_redis_database(resource: str, is_async: bool = False):
         host, colon, port = connection.partition(':')
 
         if host != '' and colon == ':' and port.isnumeric():
-            return RedisDatabase(host=host, port=int(port),
-                                 **extra_params)
+            if is_async:
+                return RedisDatabaseAsync(host=host, port=int(port),
+                                          **extra_params)
+            else:
+                return RedisDatabase(host=host, port=int(port),
+                                     **extra_params)
 
 
 @database('memory')
