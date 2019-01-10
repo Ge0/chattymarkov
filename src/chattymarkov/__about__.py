@@ -1,6 +1,6 @@
 """Project metadata."""
 
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 
 __title__ = "chattymarkov"
 __summary__ = "Generate random sentences through markov chains."
