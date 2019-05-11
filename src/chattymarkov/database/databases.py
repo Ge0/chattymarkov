@@ -60,23 +60,23 @@ class RedisDatabaseAsync(RedisDatabasePropertyMixin):
                 db=self._db, password=self._password)
 
     async def add(self, key, element):
-        async with self._connection_pool as conn:
+        with await self._connection_pool as conn:
             return await conn.execute('SADD', key, element.encode()) > 0
 
     async def random(self, key):
-        async with self._connection_pool as conn:
+        with await self._connection_pool as conn:
             element = await conn.execute('SRANDMEMBER', key)
             if element is not None:
                 return element.decode()
 
     async def get(self, key):
-        async with self._connection_pool as conn:
+        with await self._connection_pool as conn:
             element = await conn.execute('GET', key)
             if element is not None:
                 return element.decode()
 
     async def set(self, key, value):
-        async with self._connection_pool as conn:
+        with await self._connection_pool as conn:
             await conn.execute('SET', key, value)
 
 
