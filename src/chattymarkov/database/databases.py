@@ -43,35 +43,40 @@ class RedisDatabaseAsync(RedisDatabasePropertyMixin):
 
         if unix_socket_path is not None:
             self._unix_socket_path = unix_socket_path
-            self._connection_pool = aioredis.create_pool(
-                self._unix_socket_path, minsize=5, maxsize=10,
-                db=self._db, password=self._password)
         else:
-            self._connection_pool = aioredis.create_pool(
-                (host, port),
-                minsize=5, maxsize=10,
-                db=self._db, password=self._password)
             self._host = host
             self._port = int(port)
 
+    async def connect(self):
+        """Create the connection pool."""
+        if self._unix_socket_path is not None:
+            self._connection_pool = await aioredis.create_pool(
+                self._unix_socket_path, minsize=5, maxsize=10,
+                db=self._db, password=self._password)
+        else:
+            self._connection_pool = await aioredis.create_pool(
+                (self._host, self._port),
+                minsize=5, maxsize=10,
+                db=self._db, password=self._password)
+
     async def add(self, key, element):
-        with await self._connection_pool as conn:
+        async with self._connection_pool as conn:
             return await conn.execute('SADD', key, element.encode()) > 0
 
     async def random(self, key):
-        with await self._connection_pool as conn:
+        async with self._connection_pool as conn:
             element = await conn.execute('SRANDMEMBER', key)
             if element is not None:
                 return element.decode()
 
     async def get(self, key):
-        with await self._connection_pool as conn:
+        async with self._connection_pool as conn:
             element = await conn.execute('GET', key)
             if element is not None:
                 return element.decode()
 
     async def set(self, key, value):
-        with await self._connection_pool as conn:
+        async with self._connection_pool as conn:
             await conn.execute('SET', key, value)
 
 

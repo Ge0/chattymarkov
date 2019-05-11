@@ -5,6 +5,14 @@ The format is based on `Keep a
 Changelog <http://keepachangelog.com/en/1.0.0/>`__ and this project
 adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
+[1.2.6] 2019-05-12
+------------------
+
+Fixed
+~~~~~
+
+- Use connection pool the right way in RedisDatabaseAsync
+
 [1.2.5] 2019-05-11
 ------------------
 
