@@ -44,11 +44,13 @@ class RedisDatabaseAsync(RedisDatabasePropertyMixin):
         if unix_socket_path is not None:
             self._unix_socket_path = unix_socket_path
             self._connection_pool = aioredis.create_pool(
-                self._unix_socket_path, minsize=5, maxsize=10)
+                self._unix_socket_path, minsize=5, maxsize=10,
+                db=self._db, password=self._password)
         else:
             self._connection_pool = aioredis.create_pool(
                 (host, port),
-                minsize=5, maxsize=10)
+                minsize=5, maxsize=10,
+                db=self._db, password=self._password)
             self._host = host
             self._port = int(port)
 
