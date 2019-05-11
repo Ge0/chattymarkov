@@ -106,6 +106,44 @@ class RedisDatabase(AbstractDatabase, RedisDatabasePropertyMixin):
         self.handle.set(key, value)
 
 
+class MemoryDatabaseAsync:
+    """Asynchronous memory database class for chattymarkov.
+
+    This is just a volatile, in-memory database which is built either from a
+    pre-existing dictionary or from scratch. Upon object destruction, the
+    database is not saved.
+
+    """
+    def __init__(self, db=None, *args, **kwargs):
+        if db is None:
+            self.db = {}
+        else:
+            self.db = db
+
+    async def add(self, key, element):
+        if key not in self.db:
+            self.db[key] = []
+        if type(self.db[key]) is not list:
+            return False
+
+        if element not in self.db[key]:
+            self.db[key].append(element)
+
+    async def random(self, key):
+        if key not in self.db:
+            return None
+        elif type(self.db[key]) is not list:
+            return None
+        else:
+            return random.choice(self.db[key])
+
+    def get(self, key, default=None):
+        return self.db.get(key, default)
+
+    def set(self, key, value):
+        self.db[key] = value
+
+
 class MemoryDatabase(AbstractDatabase):
     """Memory database class for chattimarkov.
 

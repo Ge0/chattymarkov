@@ -2,9 +2,8 @@
 
 This submodule gathers all the supported database formats.
 """
-from .databases import (
-    JSONFileDatabase, MemoryDatabase, RedisDatabase, RedisDatabaseAsync
-)
+from .databases import (JSONFileDatabase, MemoryDatabase, MemoryDatabaseAsync,
+                        RedisDatabase, RedisDatabaseAsync)
 
 
 class ChattymarkovDatabaseError(Exception):
@@ -132,6 +131,22 @@ def build_memory_database(resource):
             connection to the desired database.
     """
     return MemoryDatabase()
+
+
+@database("memory_async")
+def build_async_memory_database(resource):
+    """Build a `MemoryDatabaseAsync` instance.
+
+    Args:
+        resource (str): path to the memory location. It has actually no sense
+            at that time. Should be "async_memory://" anyway.
+
+    Returns:
+        MemoryDatabaseAsync: an instance of MemoryDatabaseAsync that handles a
+            connection to the desired database.
+
+    """
+    return MemoryDatabaseAsync()
 
 
 @database('json')
