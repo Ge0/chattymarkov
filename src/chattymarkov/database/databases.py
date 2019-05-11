@@ -43,33 +43,34 @@ class RedisDatabaseAsync(RedisDatabasePropertyMixin):
 
         if unix_socket_path is not None:
             self._unix_socket_path = unix_socket_path
+            self._connection_pool = aioredis.create_pool(
+                self._unix_socket_path, minsize=5, maxsize=10)
         else:
+            self._connection_pool = aioredis.create_pool(
+                (host, port),
+                minsize=5, maxsize=10)
             self._host = host
             self._port = int(port)
 
-    async def connect(self):
-        if self._unix_socket_path:
-            self._conn = await aioredis.create_connection(
-                self._unix_socket_path, db=self._db, password=self._password)
-        else:
-            self._conn = await aioredis.create_connection(
-                (self._host, self._port), db=self._db, password=self._password)
-
     async def add(self, key, element):
-        return await self._conn.execute('SADD', key, element.encode()) > 0
+        with await self._connection_pool as conn:
+            return await conn.execute('SADD', key, element.encode()) > 0
 
     async def random(self, key):
-        element = await self._conn.execute('SRANDMEMBER', key)
-        if element is not None:
-            return element.decode()
+        with await self._connection_pool as conn:
+            element = await conn.execute('SRANDMEMBER', key)
+            if element is not None:
+                return element.decode()
 
     async def get(self, key):
-        element = await self._conn.execute('GET', key)
-        if element is not None:
-            return element.decode()
+        with await self._connection_pool as conn:
+            element = await conn.execute('GET', key)
+            if element is not None:
+                return element.decode()
 
     async def set(self, key, value):
-        await self._conn.execute('SET', key, value)
+        with await self._connection_pool as conn:
+            await conn.execute('SET', key, value)
 
 
 class RedisDatabase(AbstractDatabase, RedisDatabasePropertyMixin):
