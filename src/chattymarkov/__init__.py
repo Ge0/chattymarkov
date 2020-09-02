@@ -27,7 +27,7 @@ class ChattyMarkovAsync:
         stop_word="\x02",
     ):
         """Instanciate the ChattyMarkov async class."""
-        self.db = database.build_database_connection(connect_string)
+        self.db = database.build_database_connection(connect_string, True)
         self.separator = separator
         self.stop_word = stop_word
         self.prefix = prefix
