@@ -6,6 +6,14 @@ Changelog <http://keepachangelog.com/en/1.0.0/>`__ and this project
 adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`__.
 
 
+[1.3.0] 2020-09-02
+------------------
+
+Changed
+~~~~~~~
+
+- Accept standard redis URL for connection strings.
+
 [1.2.8] 2020-09-02
 ------------------
 

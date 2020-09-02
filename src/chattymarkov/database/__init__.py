@@ -89,7 +89,7 @@ def build_redis_database(
     Returns:
         An instance to communicate with the redis server.
     """
-    whitelist = {"password", "db"}
+    whitelist = {"db"}
     extra_params = {}
 
     connection, params = _get_connection_params(resource)
@@ -110,16 +110,13 @@ def build_redis_database(
         else:
             return RedisDatabase(unix_socket_path=connection, **extra_params)
     else:
-        # TCP socket connection
-        host, colon, port = connection.partition(":")
-
-        if host != "" and colon == ":" and port.isnumeric():
-            if is_async:
-                return RedisDatabaseAsync(
-                    host=host, port=int(port), **extra_params
-                )
-            else:
-                return RedisDatabase(host=host, port=int(port), **extra_params)
+        # It's a normal connection string.
+        if is_async:
+            return RedisDatabaseAsync(
+                url=f"redis://{connection}", **extra_params
+            )
+        else:
+            return RedisDatabase(url=f"redis://{connection}", **extra_params)
 
 
 @database("memory")

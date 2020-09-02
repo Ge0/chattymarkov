@@ -40,11 +40,14 @@ class RedisDatabaseAsync(RedisDatabasePropertyMixin):
         db=0,
         unix_socket_path=None,
         password=None,
+        url=None,
     ):
         self._conn = None
         self._db = int(db)
         self._password = password
         self._unix_socket_path = None
+        if url is not None:
+            self._url = f"{url}/{self._db}"
 
         if unix_socket_path is not None:
             self._unix_socket_path = unix_socket_path
@@ -54,7 +57,11 @@ class RedisDatabaseAsync(RedisDatabasePropertyMixin):
 
     async def connect(self):
         """Create the connection pool."""
-        if self._unix_socket_path is not None:
+        if self._url is not None:
+            self._connection_pool = await aioredis.create_pool(
+                self._url, minsize=1, maxsize=10
+            )
+        elif self._unix_socket_path is not None:
             self._connection_pool = await aioredis.create_pool(
                 self._unix_socket_path,
                 minsize=1,

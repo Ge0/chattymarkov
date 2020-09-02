@@ -57,9 +57,8 @@ Supported databases
 -------------------
 
 -   Redis **(recommended)**: you can either provide a unix socket path (e.g.
-    ``redis:///path/to/unix_socket.sock;db=0;password=foobar`` or a
-    ``host:port`` (e.g ``redis://localhost:6739;db=0``). Extra parameters are
-    separated by semi-colons after the unix socket path / host:port descriptor.
+    ``redis:///path/to/unix_socket.sock;db=0;password=foobar`` or an URL
+    (e.g ``redis://user:password@localhost:6739/0``).
     For the async version, either use ``redis_async://`` or instantiate a
     ``ChattyMarkovAsync`` instance.
 -   JSON: you can provide a path to a file that will be formated with JSON.
