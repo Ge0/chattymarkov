@@ -33,9 +33,14 @@ class RedisDatabasePropertyMixin:
 
 
 class RedisDatabaseAsync(RedisDatabasePropertyMixin):
-
-    def __init__(self, host="localhost", port=6739, db=0,
-                 unix_socket_path=None, password=None):
+    def __init__(
+        self,
+        host="localhost",
+        port=6739,
+        db=0,
+        unix_socket_path=None,
+        password=None,
+    ):
         self._conn = None
         self._db = int(db)
         self._password = password
@@ -51,51 +56,66 @@ class RedisDatabaseAsync(RedisDatabasePropertyMixin):
         """Create the connection pool."""
         if self._unix_socket_path is not None:
             self._connection_pool = await aioredis.create_pool(
-                self._unix_socket_path, minsize=5, maxsize=10,
-                db=self._db, password=self._password)
+                self._unix_socket_path,
+                minsize=1,
+                maxsize=10,
+                db=self._db,
+                password=self._password,
+            )
         else:
             self._connection_pool = await aioredis.create_pool(
                 (self._host, self._port),
-                minsize=5, maxsize=10,
-                db=self._db, password=self._password)
+                minsize=1,
+                maxsize=10,
+                db=self._db,
+                password=self._password,
+            )
 
     async def add(self, key, element):
         with await self._connection_pool as conn:
-            return await conn.execute('SADD', key, element.encode()) > 0
+            return await conn.execute("SADD", key, element.encode()) > 0
 
     async def random(self, key):
         with await self._connection_pool as conn:
-            element = await conn.execute('SRANDMEMBER', key)
+            element = await conn.execute("SRANDMEMBER", key)
             if element is not None:
                 return element.decode()
 
     async def get(self, key):
         with await self._connection_pool as conn:
-            element = await conn.execute('GET', key)
+            element = await conn.execute("GET", key)
             if element is not None:
                 return element.decode()
 
     async def set(self, key, value):
         with await self._connection_pool as conn:
-            await conn.execute('SET', key, value)
+            await conn.execute("SET", key, value)
 
 
 class RedisDatabase(AbstractDatabase, RedisDatabasePropertyMixin):
-    def __init__(self, host="localhost", port=6739, db=0,
-                 unix_socket_path=None, password=None):
+    def __init__(
+        self,
+        host="localhost",
+        port=6739,
+        db=0,
+        unix_socket_path=None,
+        password=None,
+    ):
 
         self._db = int(db)
         self._password = password
 
         if unix_socket_path is not None:
             self._unix_socket_path = unix_socket_path
-            self.handle = redis.StrictRedis(unix_socket_path=unix_socket_path,
-                                            db=db, password=password)
+            self.handle = redis.StrictRedis(
+                unix_socket_path=unix_socket_path, db=db, password=password
+            )
         else:
             self._host = host
             self._port = int(port)
-            self.handle = redis.StrictRedis(host=host, port=port, db=db,
-                                            password=password)
+            self.handle = redis.StrictRedis(
+                host=host, port=port, db=db, password=password
+            )
 
     def add(self, key, element):
         return self.handle.sadd(key, element.encode()) > 0
@@ -122,6 +142,7 @@ class MemoryDatabaseAsync:
     database is not saved.
 
     """
+
     def __init__(self, db=None, *args, **kwargs):
         if db is None:
             self.db = {}

@@ -28,6 +28,7 @@ def database(prefix):
         """Register `func` in the global `_DATABASE_PREFIXES` hash."""
         _DATABASE_PREFIXES[prefix] = func
         return func
+
     return wrapper
 
 
@@ -47,13 +48,14 @@ def get_database_builder(prefix):
     """
     if prefix not in _DATABASE_PREFIXES:
         raise UnknownDatabasePrefixError(
-            "Database prefix '{}' is unknown.".format(prefix))
+            "Database prefix '{}' is unknown.".format(prefix)
+        )
     return _DATABASE_PREFIXES[prefix]
 
 
 def _get_connection_params(resource):
     """Extract connection and params from `resource`."""
-    args = resource.split(';')
+    args = resource.split(";")
     if len(args) > 1:
         return args[0], args[1:]
     else:
@@ -61,7 +63,7 @@ def _get_connection_params(resource):
 
 
 @database("redis_async")
-def build_redis_database_async(resource: str):
+def build_redis_database_async(resource: str, *args, **kwargs):
     """Build a `RedisDatabaseAsync` instance to communicate with a redis
     server.
 
@@ -72,8 +74,10 @@ def build_redis_database_async(resource: str):
     return build_redis_database(resource, True)
 
 
-@database('redis')
-def build_redis_database(resource: str, is_async: bool = False):
+@database("redis")
+def build_redis_database(
+    resource: str, is_async: bool = False, *args, **kwargs
+):
     """Build a `RedisDatabase` or a `RedisDatabaseAsync` instance to
     communicate with a redis server.
 
@@ -85,7 +89,7 @@ def build_redis_database(resource: str, is_async: bool = False):
     Returns:
         An instance to communicate with the redis server.
     """
-    whitelist = {'password', 'db'}
+    whitelist = {"password", "db"}
     extra_params = {}
 
     connection, params = _get_connection_params(resource)
@@ -93,33 +97,33 @@ def build_redis_database(resource: str, is_async: bool = False):
     # Parse additional parameters, if any
     if len(params) > 0:
         for param in params:
-            key, equal, value = param.partition('=')
+            key, equal, value = param.partition("=")
             if key in whitelist:
                 extra_params[key] = value
 
-    if connection.startswith('/'):
+    if connection.startswith("/"):
         # UNIX socket connection
         if is_async:
-            return RedisDatabaseAsync(unix_socket_path=connection,
-                                      **extra_params)
+            return RedisDatabaseAsync(
+                unix_socket_path=connection, **extra_params
+            )
         else:
-            return RedisDatabase(unix_socket_path=connection,
-                                 **extra_params)
+            return RedisDatabase(unix_socket_path=connection, **extra_params)
     else:
         # TCP socket connection
-        host, colon, port = connection.partition(':')
+        host, colon, port = connection.partition(":")
 
-        if host != '' and colon == ':' and port.isnumeric():
+        if host != "" and colon == ":" and port.isnumeric():
             if is_async:
-                return RedisDatabaseAsync(host=host, port=int(port),
-                                          **extra_params)
+                return RedisDatabaseAsync(
+                    host=host, port=int(port), **extra_params
+                )
             else:
-                return RedisDatabase(host=host, port=int(port),
-                                     **extra_params)
+                return RedisDatabase(host=host, port=int(port), **extra_params)
 
 
-@database('memory')
-def build_memory_database(resource):
+@database("memory")
+def build_memory_database(resource, *args, **kwargs):
     """Build a `MemoryDatabase` instance.
 
     Args:
@@ -134,7 +138,7 @@ def build_memory_database(resource):
 
 
 @database("memory_async")
-def build_async_memory_database(resource):
+def build_async_memory_database(resource, *args, **kwargs):
     """Build a `MemoryDatabaseAsync` instance.
 
     Args:
@@ -149,8 +153,8 @@ def build_async_memory_database(resource):
     return MemoryDatabaseAsync()
 
 
-@database('json')
-def build_json_database(resource):
+@database("json")
+def build_json_database(resource, *args, **kwargs):
     """Build a `JSONFileDatabase` instance.
 
     Args:
@@ -166,7 +170,7 @@ def build_json_database(resource):
     return JSONFileDatabase(resource)
 
 
-def build_database_connection(connect_string):
+def build_database_connection(connect_string, is_async: bool = False):
     """Build a database connection based on *connect_string*.
 
     Args:
@@ -181,12 +185,14 @@ def build_database_connection(connect_string):
         AbstractDatabase: an instance of AbstractDatabase that handle a
             connection to the desired database.
     """
-    prefix, colon_slash_slash, resource = connect_string.partition('://')
-    if colon_slash_slash != '':
+    prefix, colon_slash_slash, resource = connect_string.partition("://")
+    if colon_slash_slash != "":
         builder = get_database_builder(prefix)
-        return builder(resource)
+        return builder(resource, is_async)
     else:
         raise InvalidConnectionStringError(
             "Invalid connection string '{}'. Must be of the form "
             "prefix://[resource[;param1=value1;param2=value2...]]".format(
-                prefix))
+                prefix
+            )
+        )
