@@ -19,8 +19,13 @@ class ChattyMarkovAsync:
 
     """
 
-    def __init__(self, connect_string, prefix="chattymarkov", separator="\x01",
-                 stop_word="\x02"):
+    def __init__(
+        self,
+        connect_string,
+        prefix="chattymarkov",
+        separator="\x01",
+        stop_word="\x02",
+    ):
         """Instanciate the ChattyMarkov async class."""
         self.db = database.build_database_connection(connect_string)
         self.separator = separator
@@ -42,7 +47,7 @@ class ChattyMarkovAsync:
 
     async def _split_message(self, msg):
         """Split *msg* to better learn from it."""
-        words = msg.split(' ')
+        words = msg.split(" ")
         lastword = ""
         previous = ""
         msg += " " + self.stop_word
@@ -75,7 +80,7 @@ class ChattyMarkovAsync:
             out.append(word)
             previous = lastword
             lastword = word
-        return ' '.join(out)
+        return " ".join(out)
 
     def _make_key(self, key):
         """Private method. Generate a key for internal database storage,
@@ -88,7 +93,7 @@ class ChattyMarkovAsync:
             A key used for internal use.
 
         """
-        return '-'.join((self.prefix, key))
+        return "-".join((self.prefix, key))
 
 
 class ChattyMarkov:
@@ -100,8 +105,13 @@ class ChattyMarkov:
 
     """
 
-    def __init__(self, connect_string, prefix="chattymarkov", separator="\x01",
-                 stop_word="\x02"):
+    def __init__(
+        self,
+        connect_string,
+        prefix="chattymarkov",
+        separator="\x01",
+        stop_word="\x02",
+    ):
         """Instanciate the ChattyMarkov class.
 
         Args:
@@ -128,7 +138,7 @@ class ChattyMarkov:
             A key used for internal use.
 
         """
-        return '-'.join((self.prefix, key))
+        return "-".join((self.prefix, key))
 
     def learn(self, msg):
         """Learn from a message. This function is called in order to
@@ -138,7 +148,7 @@ class ChattyMarkov:
             msg: the sentence to learn from.
 
         """
-        if msg == '':
+        if msg == "":
             return
         for words in self._split_message(msg):
             key = self.separator.join(words[:-1])
@@ -165,11 +175,11 @@ class ChattyMarkov:
             out.append(word)
             previous = lastword
             lastword = word
-        return ' '.join(out)
+        return " ".join(out)
 
     def _split_message(self, msg):
         """Split message to better learn from it."""
-        words = msg.split(' ')
+        words = msg.split(" ")
         lastword = ""
         previous = ""
         msg += " " + self.stop_word
