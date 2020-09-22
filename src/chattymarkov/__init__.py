@@ -37,15 +37,15 @@ class ChattyMarkovAsync:
         if hasattr(self.db, "connect"):
             await self.db.connect()
 
-    async def learn(self, msg: str) -> None:
+    async def learn(self, msg: str, extra_prefix: str = "") -> None:
         """Learn from *msg*."""
         if not msg:
             return
-        async for words in self._split_message(msg):
+        async for words in self._split_message(msg, extra_prefix):
             key = self.separator.join(words[:-1])
             await self.db.add(self._make_key(key), words[-1])
 
-    async def _split_message(self, msg):
+    async def _split_message(self, msg, extra_prefix):
         """Split *msg* to better learn from it."""
         words = msg.split(" ")
         lastword = ""
@@ -53,7 +53,7 @@ class ChattyMarkovAsync:
         msg += " " + self.stop_word
 
         for word in words:
-            key = self._make_key(self.separator.join([previous, lastword]))
+            key = self._make_key(extra_prefix, self.separator.join([previous, lastword]))
             await self.db.add(key, word)
             yield [previous, lastword, word]
             previous = lastword
@@ -82,18 +82,22 @@ class ChattyMarkovAsync:
             lastword = word
         return " ".join(out)
 
-    def _make_key(self, key):
+    def _make_key(self, extra_prefix, key):
         """Private method. Generate a key for internal database storage,
         given the *key* parameter.
 
         Args:
             key: the string to generate the database key from.
+            extra_prefix: an extra prefix to classify
 
         Returns:
             A key used for internal use.
 
         """
-        return "-".join((self.prefix, key))
+        if extra_prefix:
+            return "-".join((self.prefix, extra_prefix, key))
+        else:
+            return "-".join((self.prefix, key))
 
 
 class ChattyMarkov:
