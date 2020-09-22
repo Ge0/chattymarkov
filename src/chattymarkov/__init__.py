@@ -131,7 +131,7 @@ class ChattyMarkov:
         self.stop_word = stop_word
         self.prefix = prefix
 
-    def _make_key(self, key):
+    def _make_key(self, extra_prefix, key):
         """Private method. Generate a key for internal database storage,
         given the `key` parameter.
 
@@ -142,9 +142,12 @@ class ChattyMarkov:
             A key used for internal use.
 
         """
-        return "-".join((self.prefix, key))
+        if extra_prefix:
+            return "-".join((self.prefix, extra_prefix, key))
+        else:
+            return "-".join((self.prefix, key))
 
-    def learn(self, msg):
+    def learn(self, msg, extra_prefix):
         """Learn from a message. This function is called in order to
         memorise a sentence provided through the parameter `msg`.
 
@@ -154,7 +157,7 @@ class ChattyMarkov:
         """
         if msg == "":
             return
-        for words in self._split_message(msg):
+        for words in self._split_message(msg, extra_prefix):
             key = self.separator.join(words[:-1])
             self.db.add(self._make_key(key), words[-1])
 
@@ -181,7 +184,7 @@ class ChattyMarkov:
             lastword = word
         return " ".join(out)
 
-    def _split_message(self, msg):
+    def _split_message(self, msg, extra_prefix):
         """Split message to better learn from it."""
         words = msg.split(" ")
         lastword = ""
@@ -189,7 +192,7 @@ class ChattyMarkov:
         msg += " " + self.stop_word
 
         for word in words:
-            key = self._make_key(self.separator.join([previous, lastword]))
+            key = self._make_key(extra_prefix, self.separator.join([previous, lastword]))
             self.db.add(key, word)
             yield [previous, lastword, word]
             previous = lastword
